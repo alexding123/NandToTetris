@@ -1,0 +1,179 @@
+function Render.init 0
+push constant 8
+pop static 0
+push constant 11
+pop static 1
+push constant 0
+return
+function Render.render 4
+push constant 0
+pop local 0
+call Main.board_size 0
+pop local 1
+call Screen.clearScreen 0
+pop temp 0
+call Render.draw_framework 0
+pop temp 0
+label WHILE_EXP0
+push local 0
+push local 1
+eq
+not
+not
+if-goto WHILE_END0
+push local 0
+push argument 0
+add
+pop pointer 1
+push that 0
+push constant 0
+eq
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+call Main.row_size 0
+call Math.divide 2
+pop local 3
+push local 0
+call Main.row_size 0
+call MyMath.mod 2
+pop local 2
+push local 2
+push local 3
+push local 0
+push argument 0
+add
+pop pointer 1
+push that 0
+call Render.draw_square 3
+pop temp 0
+label IF_FALSE0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function Render.draw_framework 3
+call Main.square_size 0
+pop local 1
+call Main.row_size 0
+pop local 0
+push constant 0
+pop local 2
+push constant 0
+not
+call Screen.setColor 1
+pop temp 0
+label WHILE_EXP0
+push local 2
+push local 0
+push constant 1
+add
+eq
+not
+not
+if-goto WHILE_END0
+push local 2
+push local 1
+call Math.multiply 2
+push constant 0
+push local 2
+push local 1
+call Math.multiply 2
+push local 0
+push local 1
+call Math.multiply 2
+call Screen.drawLine 4
+pop temp 0
+push constant 0
+push local 2
+push local 1
+call Math.multiply 2
+push local 0
+push local 1
+call Math.multiply 2
+push local 2
+push local 1
+call Math.multiply 2
+call Screen.drawLine 4
+pop temp 0
+push local 2
+push constant 1
+add
+pop local 2
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function Render.draw_square 1
+call Main.square_size 0
+pop local 0
+push constant 0
+not
+call Screen.setColor 1
+pop temp 0
+push argument 0
+push local 0
+call Math.multiply 2
+push constant 1
+add
+push argument 1
+push local 0
+call Math.multiply 2
+push constant 1
+add
+push argument 0
+push constant 1
+add
+push local 0
+call Math.multiply 2
+push constant 1
+sub
+push argument 1
+push constant 1
+add
+push local 0
+call Math.multiply 2
+push constant 1
+sub
+call Screen.drawRectangle 4
+pop temp 0
+push constant 0
+call Screen.setColor 1
+pop temp 0
+push argument 1
+push local 0
+call Math.multiply 2
+push static 1
+call Math.divide 2
+push local 0
+push static 1
+call Math.divide 2
+push constant 2
+call Math.divide 2
+add
+push argument 0
+push local 0
+call Math.multiply 2
+push static 0
+call Math.divide 2
+push local 0
+push static 0
+call Math.divide 2
+push constant 2
+call Math.divide 2
+add
+call Output.moveCursor 2
+pop temp 0
+push constant 2
+push argument 2
+call MyMath.exp 2
+call Output.printInt 1
+pop temp 0
+push constant 0
+return

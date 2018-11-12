@@ -1,0 +1,284 @@
+class Game {
+    field Array board;
+    field int last_key;
+
+    constructor Game new() {
+        // 0 is empty, 1 is 2, 2 is 4, 3 is 8, etc.
+        let board = Array.new(Main.board_size());
+        
+        return this;
+    }
+
+    method void init() {
+        /** spawns and initializes neccessary packages */
+        do pop_new();
+        do MyMath.seed(2);
+        do Render.init();
+        return;
+    }
+    
+    method void pop_new() {
+        /** pops a new random tile (2 or 4) into the board */
+        var int i;
+        let i = MyMath.randomInt(0,Main.board_size()-1);
+        if (~(board[i] = 0)) {
+            do pop_new();
+            return;
+        } else {
+            let board[i] = MyMath.exp(2, MyMath.randomInt(0,1));
+            return;
+        }
+    }
+
+    function int index_2D(int i, int j) {
+        /** returns index of 1D array given row (i) and col (j) */
+        return (i*Main.row_size()) + j;
+    }
+
+    method bool move_left() {
+        /** move board left */
+        var int row_size;
+        var Array row_result; // to store, temporarily, the result for each row
+        var int i,j;
+        var int row_pos, prev_value;
+        var bool changed;
+
+        let row_size = Main.row_size();
+        let row_result = Array.new(row_size);
+
+        while (~(i=row_size)) {
+            let row_pos = 0;
+            let j = 0;
+            let prev_value = 0;
+            
+            while (~(j=row_size)) {
+                let row_result[j] = 0;
+                let j = j+1;
+            }
+
+            let j = 0;
+            while (~(j=row_size)) {
+                // not empty
+                if (~(board[Game.index_2D(i,j)] = 0)) {
+                    // if should be merged
+                    if (board[Game.index_2D(i,j)]=prev_value) {
+                        let row_result[row_pos-1] = row_result[row_pos-1]+1;
+                        // row_pos is still the newest place to add new value
+                        let prev_value = 0; // avoid triple merging
+                    } else {
+                        let row_result[row_pos] = board[Game.index_2D(i,j)];
+                        let prev_value = row_result[row_pos];
+                        let row_pos = row_pos + 1;
+                    }
+                }
+                let j = j+1;
+            }
+            let j = 0;
+            while (~(j=row_size)) {
+                if (~(board[Game.index_2D(i,j)] = row_result[j])) {
+                    let changed = true;
+                    let board[Game.index_2D(i,j)] = row_result[j];
+                }
+                
+                let j = j+1;
+            }
+
+            
+            let i = i+1;
+            
+        }
+        do row_result.dispose();
+
+        return changed;
+    }
+
+    method void flip_board_horizontal() {
+        var int i, j;
+        var int size;
+        var Array new_board;
+        let size = Main.row_size();
+        let new_board = Array.new(Main.board_size());
+
+        while (~(i=size)) {
+            let j = 0;
+            while (~(j=size)) {
+                let new_board[Game.index_2D(i,j)] = board[Game.index_2D(i,size-j-1)];
+                let j = j+1;
+            }
+            let i = i+1;
+        }
+        
+        do board.dispose();
+        let board=new_board;
+        return;
+    }
+
+    method bool move_right() {
+        /** move board right */
+        // flip and board and move left and flip it back
+        var bool changed;
+        do flip_board_horizontal();
+        let changed = move_left();
+        do flip_board_horizontal();
+        return changed;
+    }
+
+    method void turn_left() {
+        /** flip the board counter_clockwise 90 degree */
+        var int i, j;
+        var int size;
+        var Array new_board;
+        let size = Main.row_size();
+        let new_board = Array.new(Main.board_size());
+
+        while (~(i=size)) {
+            let j = 0;
+            while (~(j=size)) {
+                let new_board[Game.index_2D(i,j)] = board[Game.index_2D(size-j-1, i)];
+                let j = j+1;
+            }
+            let i = i+1;
+        }
+        do board.dispose();
+        let board=new_board;
+        return;
+    }
+
+    method void turn_right() {
+        /** flip the board clockwise 90 degree */
+        var int i, j;
+        var int size;
+        var Array new_board;
+        let size = Main.row_size();
+        let new_board = Array.new(Main.board_size());
+
+        while (~(i=size)) {
+            let j = 0;
+            while (~(j=size)) {
+                let new_board[Game.index_2D(i,j)] = board[Game.index_2D(j,size-i-1)];
+                let j = j+1;
+            }
+            let i = i+1;
+        }
+
+        do board.dispose();
+        let board=new_board;
+        return;
+    }
+
+    method bool move_up() {
+        /** moves the board up */
+        var bool changed;
+        do turn_right();
+        let changed = move_left();
+        do turn_left();
+        return changed;
+    }
+
+    method bool move_down() {
+        /** moves the board down */
+        var bool changed;
+        do turn_left();
+        let changed = move_left();
+        do turn_right();
+        return changed;
+    }
+
+    method bool is_over() {
+        /** is the game over */
+        var int size, i, j;
+        let size = Main.row_size();
+
+        // check all pairs of neighbors
+        while (~(i=size)) {
+            let j = 0;
+            while (~(j=size)) { // empty space 
+                if (board[Game.index_2D(i,j)] = 0) {
+                    return false;
+                }
+
+                // neighbor below and to the right
+                if (~(i=(size-1))) {
+                    if (board[Game.index_2D(i,j)] = board[Game.index_2D(i+1,j)]) {
+                        return false;
+                    }
+                }
+                if (~(j=(size-1))) {
+                    if (board[Game.index_2D(i,j)] = board[Game.index_2D(i,j+1)]) {
+                        return false;
+                    }
+                }
+                let j = j+1;
+            }
+            let i = i+1;
+        }
+        return true;
+    }
+
+    method bool full() {
+        var int i;
+        while (~(i=Main.board_size())) {
+            if (board[i] = 0) {
+                return false;
+            }
+            let i = i+1;
+        }
+        return true;
+    }
+
+    method void run() {
+        var bool game_end;
+        var int key;
+        var bool changed;
+
+        do init();
+
+        do Render.render(board);
+        let game_end = false;
+
+        while (~game_end) {
+            let key = Keyboard.keyPressed();
+            if ((~(key = last_key)) & (~(key = 0))) {
+                if (key = 84) { // 't'
+                    if (~full()) {
+                        do pop_new();
+                    }
+                }
+                if (key = 130) { // left arrow
+                    let changed = move_left();
+                    if (changed) {
+                        do pop_new();
+                    }
+                }
+                if (key = 131) { // up arrow
+                    let changed = move_up();
+                    if (changed) {
+                        do pop_new();
+                    }
+                }
+                if (key = 132) { // right arrow
+                    let changed = move_right();
+                    if (changed) {
+                        do pop_new();
+                    }
+                }
+                if (key = 133) { // left arrow
+                    let changed = move_down();
+                    if (changed) {
+                        do pop_new();
+                    }
+                }
+                do Render.render(board); // render only after game updates
+                let game_end = is_over();
+            }
+            let last_key = key;
+        }
+        return;
+    }
+
+    method void dispose() {
+        do board.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

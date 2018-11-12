@@ -1,0 +1,13 @@
+class Main {
+    function int square_size() {return 48;}
+    function int row_size() {return 4;}
+    function int board_size() {return Main.row_size() * Main.row_size();}
+    function void main() {
+        var Game game;
+
+        let game = Game.new();
+        do game.run();
+        //do game.dispose();
+        return;
+    }
+}

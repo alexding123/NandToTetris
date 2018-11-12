@@ -1,0 +1,58 @@
+class Render {
+    static int w;
+    static int h;
+
+    function void init() {
+        let w = 8;
+        let h = 11;
+        return;
+    }
+
+    function void render(Array board) {
+        var int i, size;
+        var int col, row;
+        let i = 0;
+        let size = Main.board_size();
+
+        do Screen.clearScreen();
+        do Render.draw_framework();
+        
+        while (~(i=size)) {
+            if (~(board[i]=0)) {
+                let row = i / Main.row_size();
+                let col = MyMath.mod(i, Main.row_size());
+                do Render.draw_square(col, row, board[i]);   
+            }
+            let i = i + 1;
+        }
+        return;
+    }
+
+    function void draw_framework() {
+        var int l, size;
+        var int i;
+        let size = Main.square_size();
+        let l = Main.row_size();
+        let i = 0;
+
+        do Screen.setColor(true);
+        while (~(i = (l+1))) {
+            do Screen.drawLine(i*size, 0, i*size, l*size);
+            do Screen.drawLine(0, i*size, l*size, i*size);
+            let i = i + 1;
+        }
+        return;
+    }
+
+    function void draw_square(int col, int row, int value) {
+        var int c;
+        let c = Main.square_size();
+
+        do Screen.setColor(true);
+        do Screen.drawRectangle((col*c)+1, (row*c)+1, ((col+1)*c)-1, ((row+1)*c)-1); // cuz there is no strict order enforcing in Jack
+        do Screen.setColor(false);
+        do Output.moveCursor(((row*c)/h)+((c/h)/2), ((col*c)/w)+((c/w)/2));
+        do Output.printInt(MyMath.exp(2,value));
+        return;
+    }
+}

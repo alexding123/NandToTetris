@@ -2,3 +2,11 @@
 **/Icon?
 **.DS_Store
 *.egg
+08/vm_translate.egg-info/top_level.txt
+08/vm_translate/__pycache__/__init__.cpython-36.pyc
+08/vm_translate/__pycache__/__main__.cpython-36.pyc
+08/vm_translate/__pycache__/parser.cpython-36.pyc
+08/vm_translate/__pycache__/writer.cpython-36.pyc
+08/vm_translate.egg-info/PKG-INFO
+08/vm_translate.egg-info/dependency_links.txt
+08/vm_translate.egg-info/SOURCES.txt

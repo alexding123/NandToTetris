@@ -1,0 +1,36 @@
+class MyMath {
+    static int seed;
+
+    function void seed(int s) {
+        let seed = s;
+        return;
+    }
+    function int exp(int a, int x) {
+        /* returns a^x */
+        var int i, n;
+        let i = 0;
+        let n = 1;
+
+        while (~(i=x)) {
+            let n = n*a;
+            let i = i+1;
+        }
+        return n;
+    }
+
+    function int mod(int a, int b) {
+        return a - ((a/b)*b);
+    }
+
+    function int randomInt(int a, int b) {
+        /* returns a random integer in [a,b] */
+        var int i;
+        let i = MyMath.mod(MyMath.random(), b-a+1); // i is between 0 and b-a
+        return i + a;
+    }
+
+    function int random() {
+        let seed = Math.abs((seed * 31421) + 6927); // reseed
+        return seed;
+    }
+}
