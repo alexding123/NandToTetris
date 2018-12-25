@@ -25,5 +25,4 @@ else:
     if p.suffix != ".jack":
         print("{} is not a .jack file".format(p.name))
     else:
-        # tokenizer stuff
-        pass
+        CompilationEngine(p, "{}.xml".format(p.stem))
