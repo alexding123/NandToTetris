@@ -9,5 +9,7 @@ A working VM Translator (VM into assembly) can be found in [PSET 08](08).
 
 A 2048 game is made for [PSET 09](09).
 
+A VM Compiler (JACK into VM) can be found in [PSET 11](11). 
+
 
 Alex Ding, 2018
